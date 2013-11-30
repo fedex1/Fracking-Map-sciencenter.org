@@ -1,0 +1,130 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <head>
+<!--
+Modified from the Google Earth API Examples for Sciencenter
+
+Stephen Longfield, 2013
+
+-->
+    <title>Testing Google Earth API</title>
+    <!-- *** Replace the key below below with your own API key, available at http://code.google.com/apis/maps/signup.html *** -->
+    <script src="http://www.google.com/jsapi?key=ABQIAAAAwbkbZLyhsmTCWXbTcjbgbRSzHs7K5SvaUdm8ua-Xxy_-2dYwMxQMhnagaawTo7L1FE1-amhuQxIlXw"></script>
+	<script type="text/javascript" src="http://earth-api-utility-library.googlecode.com/svn/trunk/extensions/dist/extensions.pack.js"></script>
+	<script type="text/javascript" src="bboxview.js"></script>
+    <script>
+google.load("earth", "1.x");
+
+var ge = null;
+var gex = null;
+
+var appPath = document.location.href.replace(/\/[^\/]*$/, '/');
+
+function init() {
+  google.earth.createInstance("map3d", initCallback, failureCallback);
+}
+
+function initCallback(pluginInstance) {
+  // Generate data structures
+  ge = pluginInstance;
+  gex = new GEarthExtensions(ge);
+  
+  // Set up the maps
+  ge.getWindow().setVisibility(true);
+  ge.getLayerRoot().enableLayerById(ge.LAYER_BORDERS, true);
+  ge.getLayerRoot().enableLayerById(ge.LAYER_ROADS, true);
+  ge.getNavigationControl().setVisibility(ge.VISIBILITY_SHOW)
+}
+var pjs = 0;
+
+function update(posnum) {
+  var mypos = new Array()
+  <!-- The Sciencenter -->
+  mypos[0] = [42.44958, -76.50435];
+  <!-- Taughannock Falls -->
+  mypos[1] = [42.54562, -76.59745];
+  <!-- Treman State Park -->
+  mypos[2] = [42.39750, -76.56117];
+  <!-- Myers Point -->
+  mypos[3] = [42.53702, -76.54832];
+  <!-- Trout Run, PA gas well -->
+  mypos[4] = [41.43452, -77.03942];
+  var center = new geo.Point(mypos[posnum][0] , mypos[posnum][1]);
+  
+  if (pjs == 1) {
+    gex.dom.clearFeatures()
+  }
+  
+  var placemarkJson = {}
+  
+  var bounds = new geo.Bounds()
+    
+  // there is some measure of accuracy, in meters
+  var bounds = new geo.Bounds();
+  var pts = [];
+  for (var heading = 0; heading <= 360; heading += 10) {
+    var circlePt = center.destination({ heading: heading,
+                                        distance: 1609 });
+    pts.push(circlePt);
+    if (heading % 90 == 0)
+      bounds.extend(circlePt);
+  }
+
+  placemarkJson.name = 'One Mile Radius';
+  placemarkJson.point = center;
+  placemarkJson.style = {
+    label: '#08f',
+    icon: {
+      color: '#08f',
+      stockIcon: 'shapes/placemark_circle'
+    }
+  }
+  placemarkJson.polygon = pts;
+  placemarkJson.style = {};
+  placemarkJson.style.poly = { opacity: 0.1
+, color: '#08f' };
+  placemarkJson.style.line = { opacity: .5, color: '#08f', width: 5 };
+
+  
+  
+  var pluginContainerNode = document.getElementById('map3d');
+  var boundsView = createBoundsView(ge, bounds,
+                                    pluginContainerNode.offsetWidth /
+                                    pluginContainerNode.offsetHeight);
+
+  ge.getView().setAbstractView(boundsView);
+  
+  gex.dom.addPlacemark(placemarkJson);
+  pjs = 1;
+  
+  
+  var pluginContainerNode = document.getElementById('map3d');
+  var boundsView = createBoundsView(ge, bounds,
+                                    pluginContainerNode.offsetWidth /
+                                    pluginContainerNode.offsetHeight);
+
+}
+
+function failureCallback(object) {
+}
+    </script>
+  </head>
+  <body onload='init()' id='body'>
+    <center>
+
+      <div id='map3d' style='border: 1px solid silver; height: 600px; width: 800px;'></div>
+	  
+      <div>
+      <form id="place" action='javascript:void(0);'>
+	  <button onclick='posnum=0;update(0)'> The Sciencenter</button>
+	  <button onclick='posnum=1;update(1)'> Taughannock Falls</button>
+	  <button onclick='posnum=2;update(2)'> Treman State Park</button>
+	  <button onclick='posnum=3;update(3)'> Myers Point</button>
+	  <button onclick='posnum=4;update(4)'> Trout Run, PA gas well</button>
+	  </p></form>
+      </div>
+    </center>
+  </body>
+
+</html>
