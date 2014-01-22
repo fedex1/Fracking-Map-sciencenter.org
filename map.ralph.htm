@@ -53,7 +53,8 @@ function eventListener(event) {
 function addoverlay(centerparm){
 	var groundOverlay = ge.createGroundOverlay('');
 	groundOverlay.setIcon(ge.createIcon(''))
-	groundOverlay.getIcon().setHref("http://www.google.com/intl/en_ALL/images/logo.gif");
+	//groundOverlay.getIcon().setHref("http://www.google.com/intl/en_ALL/images/logo.gif");
+	groundOverlay.getIcon().setHref("https://sciencenterfracking.appspot.com/static/drillpaths.gif");
 	groundOverlay.setLatLonBox(ge.createLatLonBox(''));
 
 	var center = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
