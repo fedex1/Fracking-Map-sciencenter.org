@@ -18,7 +18,10 @@ Ralph Yozzo, 2013
     <!-- <script type="text/javascript" src="/static/bboxview.js"></script> -->
 	<script type="text/javascript" src="bboxview.js"></script>
     <script>
-google.load("earth", "1.x");
+
+        var placemark2;
+//google.load("earth", "1.x");
+google.load("earth", "1");
 
 var ge = null;
 var gex = null;
@@ -27,6 +30,7 @@ var appPath = document.location.href.replace(/\/[^\/]*$/, '/');
 
 function init() {
   google.earth.createInstance("map3d", initCallback, failureCallback);
+  //addSampleButton('test1', buttonClick);
 }
 
 function initCallback(pluginInstance) {
@@ -41,8 +45,12 @@ function initCallback(pluginInstance) {
   ge.getNavigationControl().setVisibility(ge.VISIBILITY_SHOW)
   google.earth.addEventListener(ge.getView(), "viewchange", eventListener);
   //google.earth.addEventListener(ge.getView(), "mousemove", eventListener2);
+  placemark2 = ge.createPlacemark('');
+  //console.log('1:placemark2: ' + placemark2)
+
   posnum=0;update(0)
   //addoverlay()
+
 }
 
 function eventListener(event) {
@@ -128,7 +136,8 @@ function update(posnum) {
   placemarkJson.style.line = { opacity: .5, color: '#08f', width: 5 };
 
 
-  var placemark = ge.createPlacemark('');
+  /*
+  var placemark = ge.createPlacemark('1111');
   placemark.setName("placemark");
   // Define a custom icon.
   var icon = ge.createIcon('');
@@ -136,6 +145,7 @@ function update(posnum) {
   var style = ge.createStyle(''); //create a new style
   style.getIconStyle().setIcon(icon); //apply the icon to the style
   placemark.setStyleSelector(style); //apply the style to the placemark
+  */
 
   
   
@@ -147,7 +157,7 @@ function update(posnum) {
   ge.getView().setAbstractView(boundsView);
   
   gex.dom.addPlacemark(placemarkJson);
-  gex.dom.addPlacemark(placemark);
+  //gex.dom.addPlacemark(placemark);
   pjs = 1;
   
   
@@ -161,12 +171,91 @@ function update(posnum) {
   //addoverlay(center)
   //addoverlay(center)
   addoverlay(center)
+  //placemark.setGeometry(center);
+  //ge.getFeatures().appendChild(placemark);
+
+
+  var styleMap = ge.createStyleMap('');
+
+  //var placemark2;
+// Create normal style for style map
+var normalStyle = ge.createStyle('');
+var normalIcon = ge.createIcon('');
+normalIcon.setHref('http://maps.google.com/mapfiles/kml/shapes/triangle.png');
+//normalIcon.setHref('http://sciencenterfracking.appspot.com/static/drillpaths.gif');
+normalStyle.getIconStyle().setIcon(normalIcon);
+
+// Create highlight style for style map
+var highlightStyle = ge.createStyle('');
+var highlightIcon = ge.createIcon('');
+highlightIcon.setHref('http://maps.google.com/mapfiles/kml/shapes/square.png');
+highlightStyle.getIconStyle().setIcon(highlightIcon);
+
+styleMap.setNormalStyle(normalStyle);
+styleMap.setHighlightStyle(highlightStyle);
+
+// Apply stylemap to a placemark
+
+//console.log('2:placemark2: ' + placemark2)
+//console.log('2:center: ' + center)
+//placemark2.setGeometry(center);
+
+      var point = ge.createPoint('');
+      point.setLatitude(mypos[posnum][0]);
+      point.setLongitude(mypos[posnum][1]);
+placemark2.setGeometry(point);
+placemark2.setStyleSelector(styleMap);
+  ge.getFeatures().appendChild(placemark2);
 	
 }
 
 function failureCallback(object) {
 }
+
+
+function buttonClick() {
+var styleMap = ge.createStyleMap('');
+
+// Create normal style for style map
+var normalStyle = ge.createStyle('');
+var normalIcon = ge.createIcon('');
+normalIcon.setHref('http://maps.google.com/mapfiles/kml/shapes/triangle.png');
+//normalIcon.setHref('http://sciencenterfracking.appspot.com/static/drillpaths.gif');
+normalStyle.getIconStyle().setIcon(normalIcon);
+
+// Create highlight style for style map
+var highlightStyle = ge.createStyle('');
+var highlightIcon = ge.createIcon('');
+highlightIcon.setHref('http://maps.google.com/mapfiles/kml/shapes/square.png');
+highlightStyle.getIconStyle().setIcon(highlightIcon);
+
+styleMap.setNormalStyle(normalStyle);
+styleMap.setHighlightStyle(highlightStyle);
+
+// Apply stylemap to a placemark
+placemark2.setStyleSelector(styleMap);
+}
+
     </script>
+<script type="text/javascript">
+function addSampleButton(caption, clickHandler) {
+var btn = document.createElement('input');
+btn.type = 'button';
+btn.value = caption;
+
+if (btn.attachEvent)
+btn.attachEvent('onclick', clickHandler);
+else
+btn.addEventListener('click', clickHandler, false);
+
+// add the button to the Sample UI
+document.getElementById('sample-ui').appendChild(btn);
+}
+
+function addSampleUIHtml(html) {
+document.getElementById('sample-ui').innerHTML += html;
+}
+</script>
   </head>
   <body onload='init()' id='body'>
     <center>
@@ -184,6 +273,7 @@ function failureCallback(object) {
 	  </p></form>
       </div>
     </center>
+         <div id="sample-ui"></div>
   </body>
 
 </html>
