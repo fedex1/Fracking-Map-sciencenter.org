@@ -15,7 +15,8 @@ Ralph Yozzo, 2013
     <!-- *** Replace the key below below with your own API key, available at http://code.google.com/apis/maps/signup.html *** -->
     <script src="http://www.google.com/jsapi?key=ABQIAAAAwbkbZLyhsmTCWXbTcjbgbRSzHs7K5SvaUdm8ua-Xxy_-2dYwMxQMhnagaawTo7L1FE1-amhuQxIlXw"></script>
 	<script type="text/javascript" src="http://earth-api-utility-library.googlecode.com/svn/trunk/extensions/dist/extensions.pack.js"></script>
-	<script type="text/javascript" src="/static/bboxview.js"></script>
+    <!-- <script type="text/javascript" src="/static/bboxview.js"></script> -->
+	<script type="text/javascript" src="bboxview.js"></script>
     <script>
 google.load("earth", "1.x");
 
@@ -39,14 +40,19 @@ function initCallback(pluginInstance) {
   ge.getLayerRoot().enableLayerById(ge.LAYER_ROADS, true);
   ge.getNavigationControl().setVisibility(ge.VISIBILITY_SHOW)
   google.earth.addEventListener(ge.getView(), "viewchange", eventListener);
+  //google.earth.addEventListener(ge.getView(), "mousemove", eventListener2);
   posnum=0;update(0)
   //addoverlay()
 }
+
 function eventListener(event) {
   var camera = ge.getView().copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
   document.getElementById("id_alt_cam").innerHTML = 3.28084* camera.getAltitude().toFixed(2);
   addoverlay();
+}
 
+function eventListener2(event) {
+  addoverlay();
 }
 
 
@@ -87,9 +93,9 @@ function update(posnum) {
   mypos[4] = [41.43452, -77.03942];
   var center = new geo.Point(mypos[posnum][0] , mypos[posnum][1]);
   
-  //if (pjs == 1) {
+  if (pjs == 1) {
     gex.dom.clearFeatures()
-  //}
+  }
   
   var placemarkJson = {}
   
@@ -121,6 +127,16 @@ function update(posnum) {
 , color: '#08f' };
   placemarkJson.style.line = { opacity: .5, color: '#08f', width: 5 };
 
+
+  var placemark = ge.createPlacemark('');
+  placemark.setName("placemark");
+  // Define a custom icon.
+  var icon = ge.createIcon('');
+  icon.setHref('http://sciencenterfracking.appspot.com/static/drillpaths.gif');
+  var style = ge.createStyle(''); //create a new style
+  style.getIconStyle().setIcon(icon); //apply the icon to the style
+  placemark.setStyleSelector(style); //apply the style to the placemark
+
   
   
   var pluginContainerNode = document.getElementById('map3d');
@@ -131,6 +147,7 @@ function update(posnum) {
   ge.getView().setAbstractView(boundsView);
   
   gex.dom.addPlacemark(placemarkJson);
+  gex.dom.addPlacemark(placemark);
   pjs = 1;
   
   
@@ -140,6 +157,9 @@ function update(posnum) {
                                     pluginContainerNode.offsetHeight);
 
 
+  //addoverlay(center)
+  //addoverlay(center)
+  //addoverlay(center)
   addoverlay(center)
 	
 }
