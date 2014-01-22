@@ -48,7 +48,7 @@ function initCallback(pluginInstance) {
 function eventListener(event) {
   var camera = ge.getView().copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
   document.getElementById("id_alt_cam").innerHTML = 3.28084* camera.getAltitude().toFixed(2);
-  addoverlay();
+  //addoverlay();
 }
 
 function eventListener2(event) {
